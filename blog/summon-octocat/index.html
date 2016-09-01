@@ -1,0 +1,62 @@
+<!DOCTYPE html><html class="no-js" lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>refactorized blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P"><link rel="stylesheet" href="/style/main.css"></head><body><header class="column row"><h1><a href="/">refactorized blog</a></h1></header><div class="row" id="main"><div id="content"><article><div class="article-head"><h2>Summon Octocat to stand up a github repo in seconds.</h2><div class="post-date">2016:09:01</div></div><p>I have really been trying to get in the habbit of putting my code up on github as soon as I start on a project, even if it&apos;s just a curiosity. I have wirtten a <em>quick and dirty</em> script to knock this step out without halting my momentum; my ADD doesn&apos;t need competition from my workflow.</p>
+<!--short-->
+<aside>
+
+<strong>Update:</strong> My workflow is now being helped along by github&apos;s
+<a href="https://github.com/github/hub">hub</a> tool, which is excellent.<br>
+Go <del>git</del> get it right now, you won&apos;t be sorry.
+
+</aside>
+
+<h3 id="the-quick-">The Quick:</h3>
+<p>The script does the following given a project name, and optional description string:</p>
+<ol>
+<li>Creates project subdirctory, named after project name</li>
+<li>CDs into that directory and initzilizes a new git repo</li>
+<li>Touches an empty README.md file and adds it to the git index.</li>
+<li>Commits the changes with the comment &apos;init&apos;</li>
+<li><p>Makes an api call to github to new up a repo named after the project</p>
+<ul>
+<li>This ends up asking for my git password, which I like just fine.</li>
+<li>This also redirects the response ouput to /dev/null which is kinda lame.</li>
+</ul>
+</li>
+<li>Adds the remote, as origin</li>
+<li>Pushes to origin/master</li>
+</ol>
+<p>This happens in a few seconds and without any need to leave the terminal.</p>
+<h3 id="the-dirty-">The Dirty:</h3>
+<p>The script is not at all robust, and requires many things to not go wrong:</p>
+<ul>
+<li>Any error with any step will be unhandled, and probably break all subsequent steps, and surely leave things in an unknown state.</li>
+<li>This does not handle the problem of preexisting repos in your current directory, or on github with the same name.</li>
+<li>This uses the same name for the directory and reposistory and hasn&apos;t been tested with anything outside of simple camelCase or dash-seperated project names</li>
+<li>The script can not be reran to correct an error that occured</li>
+</ul>
+<p>But really the solution to any of these problems is just to <code>cd..</code> &amp; <code>rm -rf</code> the folder the script created. Because I run this script before writing any code, npm&apos;ing any packages, etc. I can afford a messy script that doesn&apos;t disturb the muses.</p>
+<h3 id="the-code-">The Code:</h3>
+<p>The following sits in my funcs file and can be found in my <a href="https://github.com/refactorized/dotfiles">dotfiles</a> repo.</p>
+<pre><code>  gh-summon () { #todo: add conditionals for breaking if error.
+      echo Summoning Octocat to create $1 repository...
+      mkdir $1
+      cd $1
+      git init
+      #todo: construct readme from name and desc, copy some default .gitignore
+      touch README.md
+      git add README.md
+      git commit -am&quot;init&quot;
+      #todo: something more useful with output
+      curl -u $(cfg github.username) https://api.github.com/user/repos -d &quot;{\&quot;name\&quot;:\&quot;${1}\&quot;,\&quot;description\&quot;:\&quot;$2\&quot;}&quot; &gt; /dev/null
+      git remote add origin git@github.com:$(cfg github.username)/$1.git
+      git push origin master
+  }
+</code></pre><p>and it reads pretty much like the bulletted list above, rendered in simple and likely inelegant bash script. It is added in my .bash_profile chain and invoking it looks like this:</p>
+<p><code>gh-summon empty-repo &quot;now with 9000% more working code&quot;</code></p>
+<p>which looks like this in my terminal:</p>
+<p><img src="https://refactorized.s3.amazonaws.com/blog/imgs/summon-octocat-terminal.png" alt="Terminal Screenshot"></p>
+<p>and just like that, I have a repo on github:</p>
+<p><img src="https://refactorized.s3.amazonaws.com/blog/imgs/summon-octocat-new-repo.png" alt="GitHub Screenshot"></p>
+<p>I hope you find the script useful; I know I do, even if it is a little sloppy. Feel free to copy, improve and share, and if you make anything cool with it let me know.</p>
+<p>-Adam</p>
+<p>Posted on <span class="postdate">Mar 6th, 2015</span></p>
+</article></div></div><script src="https://code.jquery.com/jquery-2.1.4.min.js"></script><script src="http://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script><script src="/scripts/lodash.js"></script><script>$(document).foundation();</script><script src="/scripts/vg.js"></script></body></html>

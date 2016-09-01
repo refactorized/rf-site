@@ -1,0 +1,32 @@
+<!DOCTYPE html><html class="no-js" lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>refactorized blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P"><link rel="stylesheet" href="/style/main.css"></head><body><header class="column row"><h1><a href="/">refactorized blog</a></h1></header><div class="row" id="main"><div id="content"><article><div class="article-head"><h2>How are polyfills and shims different?</h2><div class="post-date">2016:07:27</div></div><h3 id="tl-dr-">tl;dr:</h3>
+<p>A polyfill is a shim that makes browsers work like they should have in the
+first place.</p>
+<!--short-->
+<h3 id="polyfill-shim-square-rectangle">polyfill : shim :: square : rectangle</h3>
+<p>All polyfills are shims, not all shims are polyfills</p>
+<h3 id="wait-what-s-a-shim-again-">wait, what&apos;s a shim again?</h3>
+<p>A shim is a piece of code that enables an API or fixes a broken implementation,
+whether it be in development or already standardized, and often requires its
+presence to be known and reckoned with.  For instance transparent gifs used
+to aid certain layout situations.</p>
+<h3 id="then-what-s-a-poly-fill-">then what&apos;s a poly-fill?</h3>
+<p>A polyfill is a shim that works transparently to enable a standard while
+backward browsers catch up.  Critically, a polyfill allows the developer to
+write code against a modern standard api, with no regard to which browser it
+will run in, past the basic requirement that the polyfill supports the browser
+in question</p>
+<h3 id="says-who-">says who?</h3>
+<p>That Remy Sharp Guy:</p>
+<p><a href="https://remysharp.com/2010/10/08/what-is-a-polyfill">https://remysharp.com/2010/10/08/what-is-a-polyfill</a></p>
+<h3 id="mixing-metaphors">mixing metaphors</h3>
+<p>If you have read that article, you may be trying to reconcile the metaphors
+of wooden shims used to snug construction work in, and spackling / joint
+compound from which term polyfill is partially inspired (Polyfilla).</p>
+<p>My advice is to keep the metaphors separate, their real-life relationship
+does not play into their web development relationship outside of both of them
+being used to make construction easier.</p>
+<p>Instead, I think of the <em>poly</em> in polyfill as polymorphic, as the polyfill
+applies to each browser differently (ideally not at all), yet results in
+consistent behavior.</p>
+<p>But then again, I have probably given this way more thought than is necessary.</p>
+</article></div></div><script src="https://code.jquery.com/jquery-2.1.4.min.js"></script><script src="http://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script><script src="/scripts/lodash.js"></script><script>$(document).foundation();</script><script src="/scripts/vg.js"></script></body></html>
