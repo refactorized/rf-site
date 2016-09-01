@@ -1,13 +1,14 @@
 ---
-title: bash (mac) one-liner to view nvm-selected node version docs.
+title: node-docs alias
+summary: bash (mac) one-liner to view nvm-selected node version docs.
 ---
-
 ## What-why?
 
+<!--short-->
 This is a feature I expected to find in nvm, and when I didn't I forked the repo so I could add it. I am a little busy right now, however; and I didn't know the best way to go about writing tests for a proper pull request, seeing as I would have to monitor the launch of a web page.
 
 So I took the path of least resistance, and kind of like how that turned out. There is something delicious about adding so much convenience with 5 minutes of thought and one line of code.
-
+<!--short-->
 ## How?
 
 Here's the alias I add to my start-up [dotfiles](https://github.com/refactorized/dotfiles) :
@@ -25,10 +26,6 @@ Originally, I had this wrapped up as a bash function, but it works fine as a sim
 
 "Well, _Duh_" says the seasoned bash programmer, the contents inside the double quotes are expanded when the script is run. The ``node --version`` part 'executes' when the alias is first built and the resulting alias becomes `open http://nodejs.org/docs/v0.10.35/api/`. Wrapping it all in single quotes instead prevents bash from evaluating the inner expressions until the alias is invoked from the shell.
 
-## Unix / Linux / Fossy Posix
+This should work with little modification in linux too, namely replacing the `open` command, but I haven't tried.
 
-We are going to try to do this is node, stay tuned.
-
-## Windows?
-
-probably not.
+ 

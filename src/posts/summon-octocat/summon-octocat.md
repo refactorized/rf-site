@@ -2,7 +2,19 @@
 title: Summon Octocat to stand up a github repo in seconds.
 ---
 
+
 I have really been trying to get in the habbit of putting my code up on github as soon as I start on a project, even if it's just a curiosity. I have wirtten a _quick and dirty_ script to knock this step out without halting my momentum; my ADD doesn't need competition from my workflow.
+
+<!--short-->
+
+<aside>
+
+**Update:** My workflow is now being helped along by github's
+[hub](https://github.com/github/hub) tool, which is excellent.  
+
+Go ~~git~~ get it right now, you won't be sorry.
+
+</aside>
 
 ### The Quick:
 

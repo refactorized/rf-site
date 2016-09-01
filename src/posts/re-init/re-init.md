@@ -1,4 +1,5 @@
 ---
+slug: reinit
 title: blog. again.
 date: 2016-03-04 00:40:14
 tags:

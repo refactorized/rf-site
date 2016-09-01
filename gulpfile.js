@@ -1,24 +1,46 @@
-var gulp = require('gulp')
-var plug = require('gulp-load-plugins')()
-var thru = require('through2')
-var path = require('path')
-var sync = require('browser-sync').create()
-var mmnt = require('moment')
-var rmrf = require('rimraf')
-var _url = require('url')
+const gulp = require('gulp')
+const plug = require('gulp-load-plugins')()
+const thru = require('through2')
+const path = require('path')
+const sync = require('browser-sync').create()
+const mmnt = require('moment')
+const rmrf = require('rimraf')
+const _url = require('url')
 
-var mergeStream = require('merge-stream')
-var R = require('ramda')
+const mergeStream = require('merge-stream')
+const R = require('ramda')
 
-var site = {
+// todo: refactor so there are two groups,
+// config, site - config does not change, site is
+// built up in preprocessing steps
+
+const SITE = {
+  fancy: true
 }
 
-var paths = {
-  root: '/',
-  blog: 'blog'
+const PATHS = {
+  root: '/',      // remote
+  blog: 'blog',   // remote
+  templates: path.join(__dirname, 'src/templates')
 }
 
-var options = {
+const ASSETS = {
+  pages: ['src/pages/**/*.pug', 'src/templates/**/*.pug'],
+  posts: ['src/posts/**/*.md'],
+  scripts: [
+    'bower_components/jquery/dist/jquery.js',
+    'bower_components/foundation-sites/dist/foundation.js',
+    'src/scripts/lodash.js',
+    'src/scripts/vg.js'
+  ],
+  scss: [
+    'src/style/main.scss',
+    'src/style/vg.scss'
+  ],
+  postAssets: []
+}
+
+const OPTS = {
   fm: {
     property: 'data',
     remove: true
@@ -31,42 +53,41 @@ var options = {
   },
   autoprefixer: {
     browsers: ['last 2 versions', 'ie >= 9', 'and_chr >= 2.3']
+  },
+  pug: {
+    basedir: PATHS.templates
+  },
+  shorty: '<!--short-->'
+}
+
+const helpers = {
+  // helpers
+  root: (...urls) => path.join(PATHS.root, ...urls),
+  formatDate: (date) => mmnt(date).format('YYYY:MM:DD')
+}
+
+// to be passed to pug
+
+// if two tags are present return the part in between as short,
+// if only one tag, return the part before
+// if none, short = text
+
+function getShorty (text) { // todo: cleanup
+  let pieces = text.split(OPTS.shorty)
+  return pieces.length === 3 ? pieces[1] : pieces[0]
+}
+
+function postDataPrep (postAssets) {
+  // infers slug from pathname if not present
+  function inferSlug (file) {
+    file.data.slug = file.data.slug || path.dirname(file.path).split(path.sep).pop()
   }
-}
-
-const assets = {
-  pages: ['src/pages/**/*.pug', 'src/templates/**/*.pug'],
-  posts: ['src/posts/**/*.md'],
-  scripts: [
-    'bower_components/jquery/dist/jquery.js',
-    'bower_components/foundation-sites/dist/foundation.js',
-    'src/scripts/lodash.js',
-    'src/scripts/vg.js'
-  ],
-  scss: [
-    'src/style/main.scss',
-    'src/style/vg.scss'
-  ]
-}
-
-function root (...urls) {
-  return path.join(paths.root, ...urls)
-}
-
-function formatDate (date) {
-  return mmnt(date).format('YYYY:MM:DD')
-}
-
-function blogAssembler () {
-  // abstract posts to use in other templates like index.html
-  var posts = []
-  var assets = []
 
   function getAssetMap (file) {
     const srcDir = path.dirname(file.path)
     const srcGlob = path.join(srcDir, '*.*')
     const srcAnti = '!' + path.join(srcDir, '*.md')
-    const destDir = path.join(paths.blog, file.data.slug)
+    const destDir = path.join(PATHS.blog, file.data.slug) // [decouple]
 
     return ({
       src: [srcGlob, srcAnti],
@@ -75,23 +96,40 @@ function blogAssembler () {
   }
 
   function each (file, enc, done) {
-    file.data.slug = file.data.slug || path.dirname(file.path).split(path.sep).pop()
-    const assetMap = getAssetMap(file)
-    assets.push(assetMap)
-    file.data.destDir = assetMap.destDir
+    inferSlug(file)
+    let assetMap = getAssetMap(file)
+    // postAssets.push(assetMap)
+    file.data.assetSrc = assetMap.src
+    file.data.destDir = assetMap.dest
+    file.data.permalink = assetMap.dest
+    done(null, file)
+  }
 
+  return thru.obj(each)
+}
+
+function blogAssembler () {
+  // abstract posts to use in other templates like index.html
+  var posts = []
+
+  function each (file, enc, done) {
     file.base = '.'
+    // todo: make file pathing less of a damn mess.
     file.path = path.join('.', file.data.slug, 'index.html')
     // push abstract post for use in other templates
-    posts.push(R.merge(file.data, {body: file.contents}))
 
-    // stream out our post
+    let full = file.contents.toString()
+    file.data.full = full
+    file.data.short = getShorty(full)
+    file.data.shortened = file.data.short !== full
+    posts.push(file.data)
+
+    // stream out our post`
     done(null, file)
   }
 
   function after (done) {
-    site.posts = posts
-    site.assets = assets
+    SITE.posts = posts
     done()
   }
 
@@ -100,13 +138,17 @@ function blogAssembler () {
 
 function rebasePosts ($, file, done) {
   const base = file.data.destDir
-  console.log(base)
+
+  const isRelPath = p =>
+    p.match(/\/\//) == null &&
+    !path.isAbsolute(p)
+
   function rebaseFn (i, url) {
-    console.log(url)
     const urlObj = _url.parse(url)
-    urlObj.pathname = path.isAbsolute(urlObj.pathname)
+    urlObj.pathname = isRelPath(urlObj.pathname)
       ? path.join(base, urlObj.pathname)
       : urlObj.pathname
+    return _url.format(urlObj)
   }
 
   $('img').attr('src', rebaseFn)
@@ -123,32 +165,30 @@ gulp.task('nuke', function (done) {
 })
 
 gulp.task('posts', function () {
-  return gulp.src(assets.posts)
-    .pipe(plug.frontMatter(options.fm))
+  return gulp.src(ASSETS.posts)
+    .pipe(plug.frontMatter(OPTS.fm))
+    .pipe(postDataPrep(ASSETS.postAssets))
     .pipe(plug.markdown())
-    .pipe(blogAssembler())
     .pipe(plug.cheerio(rebasePosts))
-    .pipe(gulp.dest(path.join('dist', paths.blog)))
+    .pipe(blogAssembler())
+    .pipe(plug.data({helpers, site: SITE}))
+    .pipe(plug.assignToPug('src/templates/post.pug', OPTS.pug))
+    .pipe(gulp.dest(path.join('dist', PATHS.blog)))
 })
 
-gulp.task('post-assets', ['posts'], function (done) {
+gulp.task('post-assets', function (done) {
   function copy (mapping) {
     return gulp.src(mapping.src)
       .pipe(gulp.dest(path.join('dist', mapping.dest)))
   }
-
-  const streams = R.map(copy, site.assets)
+  const streams = R.map(copy, ASSETS.postAssets)
   return mergeStream(streams)
 })
 
 gulp.task('pages', ['posts'], function () {
-  var locals = {
-    site: site,
-    root: root,
-    formatDate: formatDate
-  }
-  return gulp.src(assets.pages)
-    .pipe(plug.pug({locals}))
+  return gulp.src(ASSETS.pages)
+    .pipe(plug.data({helpers, site: SITE}))
+    .pipe(plug.pug(OPTS.pug))
     .pipe(gulp.dest('dist/'))
 })
 
@@ -158,15 +198,15 @@ gulp.task('markup-reload', ['pages'], function (done) {
 })
 
 gulp.task('scss', function () {
-  return gulp.src(assets.scss)
-    .pipe(plug.sass(options.scss).on('error', plug.sass.logError))
-    .pipe(plug.autoprefixer(options.autoprefixer))
+  return gulp.src(ASSETS.scss)
+    .pipe(plug.sass(OPTS.scss).on('error', plug.sass.logError))
+    .pipe(plug.autoprefixer(OPTS.autoprefixer))
     .pipe(gulp.dest('dist/style/'))
     .pipe(sync.stream())
 })
 
 gulp.task('scripts', function () {
-  return gulp.src(assets.scripts)
+  return gulp.src(ASSETS.scripts)
     .pipe(gulp.dest('dist/scripts/'))
 })
 gulp.task('scripts-reload', ['scripts'], function (done) {
@@ -175,9 +215,9 @@ gulp.task('scripts-reload', ['scripts'], function (done) {
 })
 
 gulp.task('watch', function () {
-  gulp.watch([].concat(assets.pages, assets.posts), ['markup-reload'])
-  gulp.watch(assets.scss, ['scss'])
-  gulp.watch(assets.scripts, ['scripts-reload'])
+  gulp.watch([].concat(ASSETS.pages, ASSETS.posts), ['markup-reload'])
+  gulp.watch(ASSETS.scss, ['scss'])
+  gulp.watch(ASSETS.scripts, ['scripts-reload'])
 })
 
 gulp.task('serve', ['default', 'watch'], function () {
@@ -188,4 +228,14 @@ gulp.task('serve', ['default', 'watch'], function () {
   })
 })
 
-gulp.task('default', plug.sequence('nuke', 'scss', 'scripts', 'pages', 'post-assets'))
+gulp.task('default', plug.sequence('nuke', 'scss', 'scripts', 'pages'))
+
+gulp.task('deploy', function () {
+  return gulp.src('./dist/**/*')
+    .pipe(plug.ghPages())
+})
+
+// for testing
+module.exports = {
+  getShorty
+}

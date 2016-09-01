@@ -4,6 +4,9 @@ block content
     each post in site.posts
       article
         .article-head
-          h2= post.title
-          .post-date= formatDate(post.date)
-        .post !{post.body}
+          h2: a(href=post.permalink)= post.title
+          .post-date= helpers.formatDate(post.date)
+        .post !{post.short}
+        if(post.shortened)
+          p
+            a(href=post.permalink) read more...

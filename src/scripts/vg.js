@@ -25,7 +25,7 @@ $(function () {
 
   function drawShadows (xm, ym) { // m for magnitude (-1...1)
     var css = _(stripes)
-      .map(function css (s) {
+      .map(function (s) {
         return (shadTemp({
           x: xm * s.dist * thickness * -1,
           y: ym * s.dist * thickness,
@@ -35,14 +35,14 @@ $(function () {
       .join(',')
     $('header').css('text-shadow', css)
   }
-
+var a = 0;
   function draw () {
     // drawShadows(sinTime(), cosTime())
     drawShadows(xRatio * 2 - 1, cosTime())
   }
 
   $('body').on('mousemove', function (e) {
-    xRatio = (e.pageX - $(this).offset().left) / $(this).width()
+    xRatio = (e.pageX - $(this).offset().left) / $(this).width() || 0.5
     // yRatio = (e.pageY - $(this).offset().top) / $(this).height()
   })
 

@@ -5,16 +5,17 @@ html.no-js(lang='en')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     title refactorized blog
     link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Press+Start+2P')
-    link(rel='stylesheet', href='style/main.css')
+    link(rel='stylesheet', href=helpers.root('style/main.css'))
   body
     header.column.row
-      h1 refactorized blog
+      h1: a(href=helpers.root()) refactorized blog
     #main.row
       #content
         block content
     script(src='https://code.jquery.com/jquery-2.1.4.min.js')
     script(src='http://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js')
-    script(src='scripts/lodash.js')
-    script(src='scripts/vg.js')
+    script(src=helpers.root('scripts/lodash.js'))
     script.
       $(document).foundation();
+    if(site.fancy)
+      script(src=helpers.root('scripts/vg.js'))
