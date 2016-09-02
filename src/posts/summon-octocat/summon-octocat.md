@@ -1,5 +1,6 @@
 ---
 title: Summon Octocat to stand up a github repo in seconds.
+date: 2016-04-01
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 title: node-docs alias
 summary: bash (mac) one-liner to view nvm-selected node version docs.
+date: 2016-03-01
 ---
 ## What-why?
 
@@ -27,5 +28,3 @@ Originally, I had this wrapped up as a bash function, but it works fine as a sim
 "Well, _Duh_" says the seasoned bash programmer, the contents inside the double quotes are expanded when the script is run. The ``node --version`` part 'executes' when the alias is first built and the resulting alias becomes `open http://nodejs.org/docs/v0.10.35/api/`. Wrapping it all in single quotes instead prevents bash from evaluating the inner expressions until the alias is invoked from the shell.
 
 This should work with little modification in linux too, namely replacing the `open` command, but I haven't tried.
-
- 

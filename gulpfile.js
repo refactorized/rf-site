@@ -8,7 +8,7 @@ const rmrf = require('rimraf')
 const _url = require('url')
 
 const mergeStream = require('merge-stream')
-const R = require('ramda')
+const r = require('ramda')
 
 // todo: refactor so there are two groups,
 // config, site - config does not change, site is
@@ -57,6 +57,12 @@ const OPTS = {
   pug: {
     basedir: PATHS.templates
   },
+  deploy: {
+    newRoot: 'refactorized.github.io',
+    remoteUrl: 'git@github.com:refactorized/refactorized.github.io.git',
+    origin: 'origin', // origin for the site gh-pages repo, not this repo
+    branch: 'master'
+  },
   shorty: '<!--short-->'
 }
 
@@ -98,7 +104,7 @@ function postDataPrep (postAssets) {
   function each (file, enc, done) {
     inferSlug(file)
     let assetMap = getAssetMap(file)
-    // postAssets.push(assetMap)
+    postAssets.push(assetMap)
     file.data.assetSrc = assetMap.src
     file.data.destDir = assetMap.dest
     file.data.permalink = assetMap.dest
@@ -111,6 +117,8 @@ function postDataPrep (postAssets) {
 function blogAssembler () {
   // abstract posts to use in other templates like index.html
   var posts = []
+  const comparePosts = (p1, p2) => p1.date > p2.date
+  const sortPosts = r.sort(r.comparator(comparePosts))
 
   function each (file, enc, done) {
     file.base = '.'
@@ -129,7 +137,7 @@ function blogAssembler () {
   }
 
   function after (done) {
-    SITE.posts = posts
+    SITE.posts = sortPosts(posts)
     done()
   }
 
@@ -176,12 +184,14 @@ gulp.task('posts', function () {
     .pipe(gulp.dest(path.join('dist', PATHS.blog)))
 })
 
-gulp.task('post-assets', function (done) {
+gulp.task('post-assets', ['posts'], function () {
+  console.dir(ASSETS.postAssets)
   function copy (mapping) {
+    console.dir(mapping)
     return gulp.src(mapping.src)
-      .pipe(gulp.dest(path.join('dist', mapping.dest)))
+      .pipe(gulp.dest(path.join(__dirname, 'dist', mapping.dest)))
   }
-  const streams = R.map(copy, ASSETS.postAssets)
+  const streams = r.map(copy, ASSETS.postAssets)
   return mergeStream(streams)
 })
 
@@ -228,11 +238,12 @@ gulp.task('serve', ['default', 'watch'], function () {
   })
 })
 
-gulp.task('default', plug.sequence('nuke', 'scss', 'scripts', 'pages'))
+gulp.task('default', plug.sequence('nuke', 'scss', 'scripts', 'pages', 'post-assets'))
 
 gulp.task('deploy', function () {
+  PATHS.root = OPTS.deploy.newRoot
   return gulp.src('./dist/**/*')
-    .pipe(plug.ghPages())
+    .pipe(plug.ghPages(OPTS.deploy))
 })
 
 // for testing
