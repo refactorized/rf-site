@@ -22,6 +22,48 @@ html, body{
   @return ($n * $shad-mag * $shad-x-dir) ($n * $shad-mag * $shad-y-dir);
 }
 
+@mixin header2($mtop: 3em, $mbot: 1em) {
+  h2 {
+    font-family: 'Press Start 2P', sans;
+    padding-top: 1*$band-width;
+    padding-bottom: 1*$band-width;
+    position: relative;
+    display: inline-block;
+    padding-right: 2*$band-width;
+    background-color: $header-bg-color;
+    color: $header-color;
+
+    font-size: 1.0em;
+
+    a {
+      color: $header-color;
+      &:hover {
+        color: $header-color;
+      }
+    }
+
+    margin-top: $mtop;
+    margin-bottom: $mbot;
+
+    // cheap full bleed hack, while we are abusing shadows anyway
+    box-shadow:
+      -30px 0 $header-bg-color,
+      30px 0 $header-bg-color;
+
+    @include breakpoint(medium) {
+      font-size: 1.2em;
+
+      box-shadow:
+      ($band-width * -2) 0 $header-bg-color,
+      ($band-width * -3) 0 $accent-color-1,
+      ($band-width * -4) 0 $header-bg-color,
+      ($band-width * -5) 0 $accent-color-2,
+      ($band-width * -6) 0 $header-bg-color,
+      ($band-width * -7) 0 $accent-color-3,
+    }
+  }
+}
+
 header{
   position: relative;
   margin: 0;
@@ -67,51 +109,20 @@ header{
   display: table;
   margin-top: 3em;
   margin-bottom: 1em;
-  h2 {
-    font-family: 'Press Start 2P', sans;
-    padding-top: 1*$band-width;
-    padding-bottom: 1*$band-width;
-    position: relative;
-    display: inline-block;
-    padding-right: 2*$band-width;
-    background-color: $header-bg-color;
-    color: $header-color;
 
-    font-size: 1.0em;
-
-    a {
-      color: $header-color;
-      &:hover {
-        color: $header-color;
-      }
-    }
-
-    // cheap full bleed hack, while we are abusing shadows anyway
-    box-shadow:
-      -30px 0 $header-bg-color,
-      30px 0 $header-bg-color;
-
-    @include breakpoint(medium) {
-      font-size: 1.2em;
-
-      box-shadow:
-      ($band-width * -2) 0 $header-bg-color,
-      ($band-width * -3) 0 $accent-color-1,
-      ($band-width * -4) 0 $header-bg-color,
-      ($band-width * -5) 0 $accent-color-2,
-      ($band-width * -6) 0 $header-bg-color,
-      ($band-width * -7) 0 $accent-color-3,
-    }
-  }
-
-  .post-date {
-    font-family: 'Press Start 2P', sans;
-    font-size: 11px;
-    position: absolute;
-    right: 0;
-    top: -15px;
-  }
+  @include header2(0,0);
 }
+
+@include header2();
+
+.post-date {
+  font-family: 'Press Start 2P', sans;
+  font-size: 11px;
+  position: absolute;
+  right: 0;
+  top: -15px;
+}
+
 
 h3 {
   margin-top: 1.4em;

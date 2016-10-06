@@ -1,0 +1,43 @@
+doctype html
+html.no-js(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Student Sessions
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Press+Start+2P')
+    link(rel='stylesheet', href=helpers.root('style/main.css'))
+  body
+    header.column.row
+      h1: a(href=helpers.root('./students.html')) *** code with adam ***
+    #main.row
+      #content
+        block content
+          :commonmark()
+            ## Rates & Payment
+            Current rates are **$60/hr USD** for devSchool refugees
+
+            Per slack, I am also giving each student a free session
+            or more at my discression.  I want to help you guys get back on
+            your feet and soften the blow of devSchools collapse as much
+            as possible
+
+            payment will probably be through paypal or square, or stripe - I am still
+            figuring it out, but I am still on free sessions at the moment.
+
+            ## Schedule
+
+            <iframe src="https://calendar.google.com/calendar/embed?mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=bprotv9b0i5gvpn7gc1849o59k%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FNew_York" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+
+            ## Procedure
+            - use whatever damn editor you want, including vim - but I can't teach you emacs
+            - slack me before-hand what you are working on and what you hope to learn - I will to keep notes too
+            - connect with zoom or google hangouts - you will initiate the session and slack me the link
+
+
+    script(src='https://code.jquery.com/jquery-2.1.4.min.js')
+    script(src='http://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js')
+    script(src=helpers.root('scripts/lodash.js'))
+    script.
+      $(document).foundation();
+    if(site.fancy)
+      script(src=helpers.root('scripts/vg.js'))

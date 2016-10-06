@@ -6,8 +6,11 @@ const sync = require('browser-sync').create()
 const mmnt = require('moment')
 const rmrf = require('rimraf')
 const _url = require('url')
+// const jsxf = require('jstransformer')
+// const mark = jsxf('jstransformer-commonmark')
 
 const mergeStream = require('merge-stream')
+
 const r = require('ramda')
 
 // todo: refactor so there are two groups,

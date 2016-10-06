@@ -36,6 +36,8 @@
     "chai": "^3.5.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-cheerio": "^0.6.2",
+    "jstransformer": "^1.0.0",
+    "jstransformer-commonmark": "^0.3.0",
     "merge-stream": "^1.0.0",
     "moment": "^2.14.1",
     "ramda": "^0.22.1",
