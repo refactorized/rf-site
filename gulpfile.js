@@ -38,7 +38,12 @@ const ASSETS = {
   ],
   scss: [
     'src/style/main.scss',
-    'src/style/vg.scss'
+    'src/style/vg.scss',
+    'src/style/clean.scss'
+  ],
+  css: [
+    'bower_components/milligram/dist/milligram.min.css',
+    'bower_components/normalize.css/normalize.css'
   ],
   postAssets: []
 }
@@ -218,6 +223,13 @@ gulp.task('scss', function () {
     .pipe(sync.stream())
 })
 
+// todo add rename and concat
+gulp.task('css', function () {
+  return gulp.src(ASSETS.css)
+    .pipe(gulp.dest('dist/style/'))
+    .pipe(sync.stream())
+})
+
 gulp.task('scripts', function () {
   return gulp.src(ASSETS.scripts)
     .pipe(gulp.dest('dist/scripts/'))
@@ -230,6 +242,7 @@ gulp.task('scripts-reload', ['scripts'], function (done) {
 gulp.task('watch', function () {
   gulp.watch([].concat(ASSETS.pages, ASSETS.posts), ['markup-reload'])
   gulp.watch(ASSETS.scss, ['scss'])
+  gulp.watch(ASSETS.css, ['css'])
   gulp.watch(ASSETS.scripts, ['scripts-reload'])
 })
 
@@ -241,7 +254,7 @@ gulp.task('serve', ['default', 'watch'], function () {
   })
 })
 
-gulp.task('default', plug.sequence('nuke', 'scss', 'scripts', 'pages', 'post-assets'))
+gulp.task('default', plug.sequence('nuke', 'scss', 'css', 'scripts', 'pages', 'post-assets'))
 
 gulp.task('deploy', function () {
   PATHS.root = OPTS.deploy.newRoot
