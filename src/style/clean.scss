@@ -1,6 +1,3 @@
-body {
-  background-color: #def;
-  .container {
-    background-color: #fff;
-  }
-}
+@import 'https://fonts.googleapis.com/css?family=Fira+Sans';
+@import 'clean-overrides';
+@import 'foundation';

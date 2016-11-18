@@ -37,14 +37,13 @@ const ASSETS = {
     'src/scripts/vg.js'
   ],
   scss: [
-    'src/style/main.scss',
-    'src/style/vg.scss',
-    'src/style/clean.scss'
+    'src/style/*.scss'
   ],
   css: [
     'bower_components/milligram/dist/milligram.min.css',
     'bower_components/normalize.css/normalize.css'
   ],
+  static: 'src/static/**/*',
   postAssets: []
 }
 
@@ -56,6 +55,8 @@ const OPTS = {
   scss: {
     includePaths: [
       'bower_components/foundation-sites/assets/',
+      'bower_components/susy/sass/',
+      'node_modules/breakpoint-sass/stylesheets',
       'src/style/'
     ]
   },
@@ -193,14 +194,17 @@ gulp.task('posts', function () {
 })
 
 gulp.task('post-assets', ['posts'], function () {
-  console.dir(ASSETS.postAssets)
   function copy (mapping) {
-    console.dir(mapping)
     return gulp.src(mapping.src)
       .pipe(gulp.dest(path.join(__dirname, 'dist', mapping.dest)))
   }
   const streams = r.map(copy, ASSETS.postAssets)
   return mergeStream(streams)
+})
+
+gulp.task('static-assets', function () {
+  return gulp.src(ASSETS.static)
+    .pipe(gulp.dest('dist/static/'))
 })
 
 gulp.task('pages', ['posts'], function () {
@@ -243,6 +247,7 @@ gulp.task('watch', function () {
   gulp.watch([].concat(ASSETS.pages, ASSETS.posts), ['markup-reload'])
   gulp.watch(ASSETS.scss, ['scss'])
   gulp.watch(ASSETS.css, ['css'])
+  gulp.watch(ASSETS.static, ['static-assets'])
   gulp.watch(ASSETS.scripts, ['scripts-reload'])
 })
 
@@ -254,7 +259,7 @@ gulp.task('serve', ['default', 'watch'], function () {
   })
 })
 
-gulp.task('default', plug.sequence('nuke', 'scss', 'css', 'scripts', 'pages', 'post-assets'))
+gulp.task('default', plug.sequence('nuke', 'scss', 'css', 'static-assets', 'scripts', 'pages', 'post-assets'))
 
 gulp.task('deploy', function () {
   PATHS.root = OPTS.deploy.newRoot

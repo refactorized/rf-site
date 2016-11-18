@@ -1,0 +1,16 @@
+<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 18
+           a 6 6 0 1 1  6  -6
+           a 6 6 0 1 1  12  0
+           a 6 6 0 1 1  6   6
+           a 6 6 0 1 1  0   12
+           a 6 6 0 1 1 -6   6
+           a 6 6 0 1 1 -12  0
+           a 6 6 0 1 1 -6  -6
+           a 6 6 0 1 1  0  -12"
+        fill="#222222"
+        stroke-width="0.01"
+        stroke="#222222"
+        fill-opacity="1"
+/>
+</svg>

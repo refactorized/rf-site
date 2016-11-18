@@ -1,0 +1,203 @@
+@import 'https://fonts.googleapis.com/css?family=Fira+Sans';
+@import 'clean-overrides';
+@import 'foundation';
+@import url( 'https://fonts.googleapis.com/css?family=Cambo|Playfair+Display|Playfair+Display+SC');
+@mixin font-title() {
+    font-family: 'Playfair Display', serif;
+}
+@mixin font-caps() {
+    font-family: 'Playfair Display SC', serif;
+}
+@mixin font-body() {
+    font-family: 'Cambo', serif;
+}
+$color-accent: #922;
+$color-black: #222;
+
+a {
+    color: $color-accent;
+
+    &:hover {
+        color: $color-accent;
+        text-decoration: underline;
+    }
+}
+@mixin middle($rows: 8) {
+     @include breakpoint(small){
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+    @include breakpoint(medium) {
+         @include grid-col-row();
+        @include grid-col($rows);
+        @include grid-col-off( (12-$rows)/2 ) @include grid-col-end();
+    }
+}
+@mixin shadowed() {
+    box-shadow: 0 0 8px 3px $color-black;
+}
+
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    overflow: auto;
+    @include font-body;
+}
+
+body {
+    overflow-x: hidden;
+    background-image: url("../static/bgs/pattern_44.gif");
+    background-attachment: fixed;
+    color: $color-black;
+}
+
+#intro {
+    @include middle(6);
+    @include shadowed;
+    background-color: rgba(255,255,255,0.75);
+    // border-style: solid;
+    // border-width: 18px;
+    // border-image: url(../static/bgs/doily.svg) 18 18 18 18 fill round;
+    // border-image-outset: 1;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+    .subtitle {
+        @extend h4;
+        @include font-title;
+        text-align: center;
+        width: 80%;
+        border-top: solid $color-black 0.1rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    h1 {
+        @include font-caps;
+        text-align: center;
+    }
+
+    h2 {
+        @include font-title;
+        text-align: center;
+    }
+}
+
+#projects {
+    .project {
+        background-color: rgba(255,255,255,0.75);
+        @include shadowed();
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        @include middle();
+
+        .thumbnail.float-left {
+            margin-top: 0.4rem;
+            margin-right: 1.4rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .thumbnail {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .feature {
+            width: 100%;
+            text-align: center;
+
+          .frame {
+            display: inline-block;
+            position: relative;
+            max-width: 61.8%;
+            border: solid 0.2em $color-black;
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          img {
+            width: 100%;
+            filter: contrast(120%)
+              blur(0.5px)
+              brightness(62%)
+              contrast(132%)
+              brightness(126%)
+              grayscale(100%)
+              sepia(10%);
+
+            &:hover {
+              filter: none;
+            }
+            transition-duration: 0.5s;
+
+          }
+
+          .caption {
+            display: block;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+          }
+        }
+
+        h3 {
+            @include font-title;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        li,
+        p,
+        ul {
+            @include font-body;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+
+        .figure-right {
+            @include breakpoint(small) {
+                max-width: 80%;
+                margin: 1rem auto;
+            }
+            @include breakpoint(medium) {
+                float: right;
+                max-width: 42%;
+                margin: 1rem 2rem 1rem 1rem;
+            }
+        }
+
+        &.swarmple {
+            background-image: url("../static/figures/swarmple.png");
+            background-repeat: no-repeat;
+            background-position: top center;
+        }
+    }
+}
+
+.leader {
+    background-image: url("../static/bgs/ricepaper2.png");
+    @include shadowed();
+    padding: 1em;
+    text-align: center;
+
+    p {
+        @include middle(6);
+        @include font-body;
+        text-align: left;
+    }
+
+    h2 {
+        text-align: center;
+        display: inline-block;
+        // margin-bottom: 1rem;
+        // padding-bottom: 0.8rem;
+        // border-bottom: 0.2rem #613 solid;
+        @include font-caps;
+    }
+    @include clearfix();
+}

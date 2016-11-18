@@ -1,16 +1,319 @@
-extend ../templates/clean.pug
-block head
-  title portfolio adam.tolley
-block content
-  :commonmark()
-    # portfolio for adam tolley
+doctype html
 
-    I am working on a more complete portfolio currently;
+mixin feature(props)
+  .feature
+    a(href=props.link target='_blank')
+      .frame: img(src=helpers.root('static/figures/',props.figure))
+    a(href=props.link target='_blank')
+      .caption= props.copy
 
-    Until then, I present this fine, if slightly enigmatic, list of links:
 
-    - [ my github ](https://github.com/refactorized)
-    - [ my code pen ](http://codepen.io/refactorized/)
-    - [ my jsfiddle ](https://jsfiddle.net/user/adamtolley/fiddles/)
-    - [ my blog ](http://refactorized.github.io/)
-    - [ my stackoverflow](http://stackoverflow.com/users/174965/adam-tolley)
+html.no-js(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel="stylesheet", href="style/portfolio.css")
+    script(src='https://code.jquery.com/jquery-2.1.4.min.js')
+    script(src='http://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js')
+    title portfolio adam.tolley
+  body
+
+    #intro
+      h1 Code &amp; Design
+      .subtitle A Portfolio for Adam Tolley
+
+
+      //- h2 about this portfolio
+      //- :commonmark()
+      //-   Creating the portfolio can be difficult for a developer such as myself who
+      //-   spends much of their time working for larger companies, collaborating with
+      //-   teams on specific aspects of larger projects, and often for clients who
+      //-   retain all rights to our output. As such, I am putting forth a best effort
+      //-   to highlight my skills and experience both in and out of these positions. I
+      //-   will list a few interesting commercial projects along with my contributions
+      //-   to them, and then several bits of code demonstrating my various interests
+      //-   and endeavors over the past years. It is my hope that this gives a brief but
+      //-   accurate summary of the kind of developer I am in strive to be.
+
+    #projects
+      .leader
+        h2 Commercial Projects
+
+      .project
+        h3 Vogue Digital Archive Viewer
+        +feature({
+          link: 'http://nymag.com/thecut/2011/12/vogue-archive-site-live.html',
+          figure: 'vogue-phi.png',
+          copy: 'Read about it in NY Magazine'
+        })
+        :commonmark()
+          While at AIS I worked on a digital archive viewer for various Conde Nast
+          publications.  Specifically I worked on new and improved features for Vogue
+          Magazine's version of the viewer which required a more faceted search to
+          expose rich metadata on the styles, topics, and artists tied to nearly every
+          photograph and graphic in the publication.
+
+          My most valuable contribution was a re-architecture of that search
+          functionality, unifying various code paths that had accumulated through the
+          maturation of the product focused javascript module. I employed disciplined
+          approach to organizing code which eliminated duplication of effort,
+          decoupled concerns, and established a single point of truth for searches and
+          results.
+
+          Using the [amplify.js core pub/sub](http://amplifyjs.com/api/pubsub/)
+          functionality, I restricted interaction with the search core to a simple
+          publish and subscribe interface.  This way searches initiated from disparate
+          user interactions provided by the application all followed the same work
+          flow:
+
+          1. The search is 'published' as an event the search service is subscribed
+          to. 2. The search service proceeds, to validate, correct, and execute the
+          search asynchronously with the 3rd party search provider. 3. Upon completion (
+          or error ) of the search, the service would publish a search results message
+          4. Downstream (subscribed) components would respond to the new search
+          results as needed, and based on various states which were outside the
+          concern of the main search module.
+
+          The result was a more reliable search core, in which bugs and features could
+          be reasoned about in isolation, and fixed/implemented in one code location.
+
+          This was during a time where frameworks like Angular were still gaining
+          traction, and redux was far from a buzzword in the front end development
+          community.  I am proud that my solution to this problem shares many things
+          in common with modern day approaches relied upon by thousands of developers.
+
+      .project
+        h3 Marriott Reservations Flow
+
+        +feature({
+          figure:'rate-list-phi.png',
+          link: 'static/rate-list-menu.jpeg',
+          copy: 'see larger',
+        })
+        :commonmark()
+
+          I contracted for about a year as a front-end developer working with
+          the team that handled online reservations through the main website. I
+          prototyped and implemented improvements to the hotel listing and
+          details steps of the reservations workflow.
+
+          Each change we made was based on extensive user research and the
+          expertise of our UX department, then tested in the wild using A/B and
+          multivariate strategies.  I would work very closely with the UX team,
+          often in real time, to get the designs pixel-perfect to their vision.
+
+          In order to to alleviate some dev-ops issues which were hindering
+          development speed, I set up tooling to inject the variations we were
+          developing directly into the page via a javascript bookmarklet.  This
+          code was reused as part of the live, production testing whereby it
+          interacted with our vendor CRO system.
+
+          This work required a broad skill-set and the ability to communicate
+          well between various technical disciplines.  I find such challenges
+          rewarding, and well suited to my strengths.
+
+      .leader
+        h2 Blog &amp; Site
+        :commonmark()
+
+          [refactorized.github.io](refactorized.github.io) is in-part my laboratory and
+          playground.  Here I can try out new or fun ideas and keep my
+          skills sharp.  It is also a work in progress, so things like
+          navigation are not always production ready, but I believe in getting
+          good code out the door, and making it better as time affords.
+
+          The site consists of simple static assets which are assembled by a
+          gulp workflow, and hosted on github. The source lives in a [GitHub
+          repository](https://github.com/refactorized/refactorized.github.io)
+          where the code for the following highlights can be examined.
+
+      .project
+        h3 The header
+        :commonmark()
+
+          A fun, if slightly excessive, animated header for the blog page, which
+          utilizes css shadows and transitions to create an effect inspired by
+          the title screens of old video games.
+
+          Originally prototyped in [this code
+          pen](http://codepen.io/refactorized/pen/yJqogw), the code has matured
+          to use css transitions in between less-frequent DOM updates
+          allowing the browser to optimize redraws.
+
+          The vertical positioning of the shadows is modulated by a simple sine
+          function, while the horizontal component is driven by the mouse position.
+
+      .project
+        h3 Custom Integration of Zurb Foundation
+        :commonmark()
+
+          The site uses [Zurb Foundation 6](http://foundation.zurb.com/) as a
+          base but modifies some aspects such as headers heavily.  It may have
+          been easier to code the styling from scratch, but I wanted to explore
+          strategies for integrating customizations atop the extensive
+          framework.
+
+          By using foundation's SASS files I was able to inject customizations
+          and overrides without having to fork the repo.  Owing to the flexibility of
+          the gulp build process, I am able to retain bower as the asset
+          manager.
+
+          I think this approach has made significant progress towards my goal of
+          combining modern, rapid site development strategies with deeper
+          customizations that can set sites apart from their archetypical peers.
+
+      .project
+        h3 Gulp
+        :commonmark()
+
+         I utilize gulp to build a static site from several asset types
+         including markdown posts, pug templates, and SASS processed style sheets.
+
+         Gulp's simple approach to manipulation of resources via chained
+         transform stream appeals to my preference for functional paradigms.
+         The abstraction works well enough for common tasks like template
+         expansion but really shines with more complex scenarios. because
+         gulpfiles are code, not configuration, simple transforms can be
+         composed into specialized tasks in a very straightforward manner.
+
+         One such task allows me to keep post assets in the same directory as
+         the md file, but ensures they will be copied to the appropriate asset
+         location during the build.  This, in turn, allows me to use whatever
+         markdown editor I prefer without worrying about the eventual location
+         of the published posts and assets.
+
+         Another similar task normalizes urls for scripts and images based on
+         a configured root path.  My implementation composes some common path
+         logic with [gulp-cheerio](https://www.npmjs.com/package/gulp-cheerio)
+         which enables jQuery-like DOM transforms, sparing me from
+         alternatives like complicated regex replacement.
+
+         As I expand the site to include new functionalities, I continue to
+         update the gulpfile accordingly.  There's a lot of room for growth
+         and polish, but I find maintenance mostly easy and enjoyable.
+
+      .leader
+        h2 Demos, Prototypes &amp; Experiments
+
+      .project
+        h3 Micro Pub-Sub stopwatch
+        +feature({
+          figure:'stopwatch-phi.png',
+          link: 'https://jsfiddle.net/adamtolley/EcwdV/',
+          copy: 'View the code on JSFiddle'
+        })
+        :commonmark()
+
+          A small javascript stopwatch demonstrating the publish / subscribe
+          pattern and implementing [Ben Alman's tiny
+          pub/sub](https://gist.github.com/cowboy/661855) atop jQuery.  This
+          small example illustrates the effective use of pub/sub to break up
+          intertwined functionality into simple isolated concerns that minimize
+          branching logic.
+
+
+      .project
+        h3 Angular Invoice UI
+
+        +feature({
+          figure:'numbers-phi.png',
+          link: 'http://codepen.io/refactorized/pen/YyWebQ',
+          copy: 'View the code on CodePen'
+        })
+        :commonmark()
+
+          A simple angular + bootstrap prototype for an invoicing view of an
+          application I was developing internally.  The objective was to build a clean
+          and immediately interactive interface for allocating portions of a contracts
+          remaining budget.  Instantly updating fields, dynamic status indication and
+          quick-fill buttons were employed to ease the workflow and eliminate extra
+          page loads.
+
+      .project
+        h3 Pure CSS Arrows with ribbon / chevron tails
+        +feature({
+          figure:'arrow-phi.png',
+          link: 'http://codepen.io/refactorized/pen/DyLJI',
+          copy: 'View the code on CodePen'
+        })
+        :commonmark()
+
+          Pure CSS ribbon-tailed arrows prototyped during my work with Marriott.
+          Versions of arrows went into production on the main reservations pages.
+
+
+      .project
+        h3 CSS Icon buttons
+        +feature({
+            figure:'buttons-phi.png',
+            link: 'http://codepen.io/refactorized/pen/LVxvzE',
+            copy: 'View the code on CodePen'
+          })
+        :commonmark()
+          Icon buttons implemented in pure css with font-icons. This set is less
+          minimal then I would prefer, but demonstrates some more advanced css
+          techniques like inner shadows and linear gradients.
+
+      //- .project
+      //-   h3 shrub
+      //-   :commonmark()
+      //-     https://github.com/refactorized/jquery.shrub
+      //-     https://jsfiddle.net/adamtolley/VwqhK/
+      //-
+      //-     A jQuery plugin to transform nested lists into collapsible tree structures.
+      //-     This plugin addresses a common case in which non-leaf nodes serve as the
+      //-     label for sub-nodes.  It was difficult to find a more general tree plugin
+      //-     that handled this case in a straight-forward manner so I wrote shrub as a
+      //-     simple alternative.
+
+      .project
+        h3 Swarmple
+        +feature({
+          figure:'swarmple-phi.png',
+          link: 'http://codepen.io/refactorized/pen/EKrGQK',
+          copy: 'View the code on CodePen'
+        })
+        :commonmark()
+
+          Swarmple ( a questionable portmanteau of swarm and simple) is a fun
+          project designed to teach several concepts in JavaScript.  Including:
+
+
+        :commonmark()
+
+          - canvas 2D
+          - simple particle systems
+          - collections
+          - vector math
+          - mouse interaction
+          - modeling velocity and acceleration in time intervals
+
+          My favorite feature of this demonstration is the options object at the very
+          beginning of the code. This invites experimentation by collecting the
+          critical values of the simulation into one chunk of code which can be
+          understood and altered by programmers of any level.  A huge variety of
+          behavior can be realized by playing with these values alone, but further
+          insight awaits the curious programmer who would explore the implementation.
+
+      .project
+        h3 Bezier Lab
+        +feature({
+          figure:'bezier-phi.png',
+          link: 'http://codepen.io/refactorized/pen/dMxeBb',
+          copy: 'View the code on CodePen'
+        })
+        :commonmark()
+          I find the math behind bezier curves beautifully simple, but a little
+          difficult to explain succinctly.  This codepen illustrates the process of
+          drawing fluid curves which are governed only by a series of related straight
+          line segments.  Like the swarm example, it seeks to invite experimentation and
+          interaction - though the code could use a little restructuring to increase
+          accessibility.
+
+      .reveal.large#mariott-img('data-reveal'=true)
+        img(src=helpers.root('static/rate-list-menu.jpeg'))
+        button.close-button('data-close', 'aria-label'="Close modal", type="button")
+          span('aria-hidden') &times;
+
+      script.
+        $(document).foundation();
